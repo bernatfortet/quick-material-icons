@@ -1,14 +1,11 @@
-# Webpack 
+# Figma Runner 
 
-<img src="../_screenshots/webpack.png" width="400" />
+It's like superhuman for Figma
 
-Creates rectangles. Demonstrates bundling plugin code using Webpack.
+I usually use Figma in presentation mode. Whenever I want to change the border radius I have to switch. Even if I'm out of presentation mode I don't want to even find the input.
 
-The main plugin code is in `src/code.ts`. The HTML for the UI is in
-`src/ui.html`, while the embedded JavaScript is in `src/ui.ts`.
+- br 8 => Change border radius of selected elements to 8
 
-These are compiled to files in `dist/`, which are what Figma will use to run
-your plugin.
 
 To build:
 
@@ -16,8 +13,6 @@ To build:
     $ npx webpack
 
 
+To Watch
 
-yarn webpack --mode=development --watch
-
-
-npx webpack --mode=production
+    $ npx watch
