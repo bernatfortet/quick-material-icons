@@ -39,7 +39,6 @@ onmessage = (event) => {
   }
   else if (type == EventType.ICONS) {
     const icons: string[] = data
-    console.log('icons: ', icons);
     populateIconList(icons)
   }
 }
@@ -78,8 +77,6 @@ const createIconItem = (iconName: string) => {
   item.innerHTML = iconName
   item.onclick = () => {
     sendEvent(EventType.ICON_CLICK, iconName)
-    // window.prompt("Copy to clipboard: Ctrl+C, Enter", iconName);
-    // console.log('asdf')
   }
   
   return item

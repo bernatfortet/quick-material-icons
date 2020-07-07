@@ -67,12 +67,23 @@ const sendIconOptions = ( args: string) => {
 
 const onIconClick = async ( iconName: string) => {
   const node = figma.createText()
+  const selection = figma.currentPage.selection[0]
   await figma.loadFontAsync({ family: 'Material Icons', style: 'Regular'})
-  node.fontName = { family: 'Material Icons', style: 'Regular'}
-  node.fontSize = 20
-  node.characters = iconName
 
-  figma.currentPage.appendChild(node)
+  if (selection?.type == 'TEXT'){
+    console.log('selection: ', selection);
+    selection.characters = iconName
+  } else {
+    node.fontName = { family: 'Material Icons', style: 'Regular'}
+    node.fontSize = 20
+    node.characters = iconName
+    const { x, y, width, height } = (figma.viewport as any).bounds
+    node.x = x + width/2
+    node.y = y + height/2
+
+    figma.currentPage.appendChild(node)
+  }
+  quit()
 }
 
 
