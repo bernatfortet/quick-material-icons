@@ -1,5 +1,7 @@
 import './ui.css'
-import { EventType, Option } from './utils'
+import 'material-icons/iconfont/material-icons.css'
+
+import { EventType, Option, ResultsListType } from './utils'
 import options from './options'
 
 const input: any = document.getElementById('input')
@@ -35,16 +37,27 @@ onmessage = (event) => {
     const options: Option[] = data
     populateList(options)
   }
+  else if (type == EventType.ICONS) {
+    const icons: string[] = data
+    console.log('icons: ', icons);
+    populateIconList(icons)
+  }
 }
 
-const populateList = (options: Option[]) => {
+const populateList = (options: any[]) => {
   list.innerHTML = ''
-  options.forEach( (op, i) => {
+  options.forEach( (op: any, i) => {
     const item = createItem(op, i)
     list.appendChild(item)
   })
+}
 
-  
+const populateIconList = (icons: string[]) => {
+  list.innerHTML = ''
+  icons.forEach( (op: any, i) => {
+    const item = createIconItem(op)
+    list.appendChild(item)
+  })
 }
 
 const createItem = (option: Option, position: number) => {
@@ -59,6 +72,18 @@ const createItem = (option: Option, position: number) => {
   return item
 }
 
+const createIconItem = (iconName: string) => {
+  const item = document.createElement("div"); 
+  item.className = 'icon-item material-icons'
+  item.innerHTML = iconName
+  item.onclick = () => {
+    sendEvent(EventType.ICON_CLICK, iconName)
+    // window.prompt("Copy to clipboard: Ctrl+C, Enter", iconName);
+    // console.log('asdf')
+  }
+  
+  return item
+}
 
 const execute = () => {
   sendEvent(EventType.EXECUTE, query)

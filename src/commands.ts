@@ -4,6 +4,7 @@ const VISUAL_TYPE = ["FRAME", "GROUP", "COMPONENT", "INSTANCE", "BOOLEAN_OPERATI
 const BLACK_STYLE_ID = 'S:ff960f70500498f74cd4699686bb6a8bdd759d6c,20:0'
 const BRAND_STYLE_ID = 'S:0c5baa513e3f80718152d9b017c377227a246f43,22:0'
 // type VisualType = FrameNode | InstanceNode | VectorNode | StarNode | EllipseNode | PolygonNode | RectangleNode
+
 type VisualType = RectangleNode
 
 const commands = {
@@ -37,7 +38,7 @@ const commands = {
     if (arg == 'brand') style = importStyleByKey(BRAND_STYLE_ID)
     // const fills = clone(node.fills)
     node.fillStyleId = style
-  }
+  },
 }
 
 

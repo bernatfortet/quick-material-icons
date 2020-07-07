@@ -2,7 +2,14 @@ export enum EventType {
   QUIT = 'QUIT',
   QUERY = 'QUERY',
   OPTIONS = 'OPTIONS',
-  EXECUTE = 'EXECUTE'
+  EXECUTE = 'EXECUTE',
+  ICONS = 'ICONS',
+  ICON_CLICK = 'ICON_CLICK',
+}
+
+export enum ResultsListType {
+  COMMANDS = 'COMMANDS',
+  ICONS = 'ICONS',
 }
 
 export type Option = {

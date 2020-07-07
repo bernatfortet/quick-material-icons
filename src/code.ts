@@ -2,38 +2,28 @@ import { EventUI, EventType, getStyle } from './utils'
 import options from './options'
 import commands from './commands'
 figma.showUI(__html__);
+import iconNameList from './commands/icons/iconNameList'
 
 
 
 figma.ui.onmessage = (eventUI: EventUI ) => {
   const { type, data } = eventUI
+  console.log('type: ', type);
 
   if (type == EventType.QUIT ) quit()
   if (type == EventType.QUERY ) onQuery(data)
   if (type == EventType.EXECUTE ) onExecute(data)
-
-
-  figma.ui.postMessage(options)
-
-  // One way of distinguishing between different types of messages sent from
-  // your HTML page is to use an object with a "type" property like this.
-  // if (msg.type === 'create-rectangles') {
-  //   const nodes: SceneNode[] = [];
-  //   for (let i = 0; i < msg.count; i++) {
-  //     const rect = figma.createRectangle();
-  //     rect.x = i * 150;
-  //     rect.fills = [{type: 'SOLID', color: {r: 1, g: 0.5, b: 0}}];
-  //     figma.currentPage.appendChild(rect);
-  //     nodes.push(rect);
-  //   }
-  //   figma.currentPage.selection = nodes;
-  //   figma.viewport.scrollAndZoomIntoView(nodes);
-  // }
+  if (type == EventType.ICON_CLICK ) onIconClick(data)
 
 };
 
 const onQuery = (query: string) => {
-  sendOptions()
+  let [cmd, args] = query.split(/(?<=^\S+)\s/)
+  const command = parseCommand(cmd)
+
+  if (command == 'icon') return sendIconOptions(args)
+  else
+    sendOptions()
 }
 
 const onExecute = async (query: string) => {
@@ -42,17 +32,47 @@ const onExecute = async (query: string) => {
 
   const selection: any = figma.currentPage.selection
 
-  // console.log('asdf', getStyle(selection[0]))
+  const command = parseCommand(cmd)
+
   for(const node of selection){
-    if (cmd == 'br') commands['borderRadius'](node, args)
-    else if (cmd == 'fs') commands['fontSize'](node, args)
-    else if (cmd == 'c') await commands['color'](node, args)
+    commands[command](node, args)
   }
   quit()
 }
 
+const parseCommand = (commandQuery: string) => {
+  switch(commandQuery){
+    case 'br': return 'borderRadius'
+    case 'fs': return 'fontSize'
+    case 'c': return 'color'
+    case 'ico': return 'icon'
+  }
+}
+
 const sendOptions = () => {
   sendToUI(EventType.OPTIONS, options)
+}
+
+const sendIconOptions = ( args: string) => {
+  console.log('args: ', args);
+  const iconFilter: string = args
+  const filteredIcons = iconNameList.filter( i => {
+    // console.log(`i`, i)
+    // console.log(`is index of`, i.indexOf(iconFilter))
+    // debugger
+    return i.indexOf(iconFilter) > -1
+  })
+  sendToUI(EventType.ICONS, filteredIcons)
+}
+
+const onIconClick = async ( iconName: string) => {
+  const node = figma.createText()
+  await figma.loadFontAsync({ family: 'Material Icons', style: 'Regular'})
+  node.fontName = { family: 'Material Icons', style: 'Regular'}
+  node.fontSize = 20
+  node.characters = iconName
+
+  figma.currentPage.appendChild(node)
 }
 
 
