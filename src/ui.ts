@@ -73,7 +73,7 @@ const createItem = (option: Option, position: number) => {
 
 const createIconItem = (iconName: string) => {
   const item = document.createElement("div"); 
-  item.className = 'icon-item material-icons'
+  item.className = 'item-icon material-icons'
   item.innerHTML = iconName
   item.onclick = () => {
     sendEvent(EventType.ICON_CLICK, iconName)

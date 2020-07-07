@@ -1,11 +1,15 @@
+:root {
+  --selectedBg: #D7E5FE;
+}
 
 body{ margin:0; font-family:Inter; }
 .item{ display:flex; flex-direction: column; padding:8px 16px; cursor:pointer; }
-.item:hover{ background: rgba(0,0,0,0.15); }
-.item.selected{ background: rgba(0,0,0,0.15); }
+.item:hover{ background: var(--selectedBg); }
+.item.selected{ background: var(--selectedBg); }
   .title{ font-size:14px; }
 
-.item-icon{ width:24px; height:24px; font-size:24px; float: left; user-select: none; }
+.item-icon{ width:24px; height:24px; font-size:24px; padding:2px; border-radius:4px; float: left; user-select: none; }
+.item-icon:hover{ background:var(--selectedBg); }
 
 #list{ user-select: none; }
 
