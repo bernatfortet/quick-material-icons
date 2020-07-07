@@ -1,7 +1,8 @@
-import { EventUI, EventType } from './utils'
+import { EventUI, EventType, getStyle } from './utils'
 import options from './options'
 import commands from './commands'
 figma.showUI(__html__);
+
 
 
 figma.ui.onmessage = (eventUI: EventUI ) => {
@@ -35,12 +36,17 @@ const onQuery = (query: string) => {
   sendOptions()
 }
 
-const onExecute = (query: string) => {
-  const [cmd, args] = query.split(' ')
+const onExecute = async (query: string) => {
+  let [cmd, ...other] = query.split(' ')
+  const args = other.join(' ')
 
-  const selection = figma.currentPage.selection
+  const selection: any = figma.currentPage.selection
+
+  // console.log('asdf', getStyle(selection[0]))
   for(const node of selection){
-      if (cmd == 'br') commands['borderRadius'](node, args)
+    if (cmd == 'br') commands['borderRadius'](node, args)
+    else if (cmd == 'fs') commands['fontSize'](node, args)
+    else if (cmd == 'c') await commands['color'](node, args)
   }
   quit()
 }
