@@ -27,12 +27,17 @@ const onType = ( q: string ) => {
   sendEvent(EventType.QUERY, query)
 }
 
+const forceInputValue = (value: string) => {
+  input.value = value
+}
+
 input.focus()
 input.addEventListener('input', onChange)
 input.onkeydown = event => onKeyDown(event)
 
 onmessage = (event) => {
   const { type, data } = event.data.pluginMessage
+  query = 'ico'
   if (type == EventType.OPTIONS){
     const options: Option[] = data
     populateList(options)
@@ -40,6 +45,10 @@ onmessage = (event) => {
   else if (type == EventType.ICONS) {
     const icons: string[] = data
     populateIconList(icons)
+  }
+  else if (type == EventType.SHORTCUT) {
+    forceInputValue(data+' ')
+    sendEvent(EventType.QUERY, data+' ')
   }
 }
 

@@ -5,6 +5,7 @@ export enum EventType {
   EXECUTE = 'EXECUTE',
   ICONS = 'ICONS',
   ICON_CLICK = 'ICON_CLICK',
+  SHORTCUT = 'SHORTCUT'
 }
 
 export enum ResultsListType {

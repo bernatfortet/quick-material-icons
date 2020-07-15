@@ -1,9 +1,12 @@
 import { EventUI, EventType, getStyle } from './utils'
 import options from './options'
 import commands from './commands'
-figma.showUI(__html__);
 import iconNameList from './commands/icons/iconNameList'
+figma.showUI(__html__);
 
+if (figma.command == 'icons'){
+  sendToUI(EventType.SHORTCUT, 'ico')
+}
 
 
 figma.ui.onmessage = (eventUI: EventUI ) => {
@@ -54,6 +57,7 @@ const sendOptions = () => {
 }
 
 const sendIconOptions = ( args: string) => {
+  if(args == '') return sendToUI(EventType.ICONS, iconNameList)
   console.log('args: ', args);
   const iconFilter: string = args
   const filteredIcons = iconNameList.filter( i => {
@@ -87,9 +91,10 @@ const onIconClick = async ( iconName: string) => {
 }
 
 
-const sendToUI = (type: EventType, data: any) => {
+function sendToUI(type: EventType, data: any) {
   figma.ui.postMessage({ type: type, data: data })
 }
 
 function quit(){  figma.closePlugin()}
+
 
