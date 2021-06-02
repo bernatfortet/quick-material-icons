@@ -1,12 +1,7 @@
 {
-  "name": "Runner",
+  "name": "Quick Material Icons",
   "id": "738168449509241862",
   "api": "1.0.0",
   "main": "dist/code.js",
-  "ui": "dist/ui.html",
-  "menu": [
-    {"name": "Runner", "command": "runner"},
-    {"name": "Icons", "command": "icons"},
-    {"separator": true}
-  ]
+  "ui": "dist/ui.html"
 }

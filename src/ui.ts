@@ -1,34 +1,28 @@
 import './ui.css'
 import 'material-icons/iconfont/material-icons.css'
+import iconNameList from './commands/icons/iconNameList'
 
-import { EventType, Option, ResultsListType } from './utils'
-import options from './options'
+import { EventType, Option } from './utils'
 
 const input: any = document.getElementById('input')
 const list = document.getElementById('list')
+let currentList = []
 let selectedIndex = 0
-let query = ''
 
 
 const onChange = event => {
-  if (input.value == '') populateList([])
-  else {
-    onType(input.value)
-  }
+  const query = input.value
+  const filteredIcons = iconNameList.filter( i => {
+    return i.indexOf(query) > -1
+  })
+  populateIconList(filteredIcons)
 }
 
 const onKeyDown = event => {
   if (event.key == 'Escape') return quit()
-  if (event.key == 'Enter') return execute()
-}
-
-const onType = ( q: string ) => {
-  query = q
-  sendEvent(EventType.QUERY, query)
-}
-
-const forceInputValue = (value: string) => {
-  input.value = value
+  if (event.key == 'Enter') {
+    sendEvent(EventType.ICON_CLICK, currentList[selectedIndex])
+  }
 }
 
 input.focus()
@@ -37,69 +31,32 @@ input.onkeydown = event => onKeyDown(event)
 
 onmessage = (event) => {
   const { type, data } = event.data.pluginMessage
-  query = 'ico'
-  if (type == EventType.OPTIONS){
-    const options: Option[] = data
-    populateList(options)
-  }
-  else if (type == EventType.ICONS) {
+  if (type == EventType.HISTORY && data) {
     const icons: string[] = data
     populateIconList(icons)
   }
-  else if (type == EventType.SHORTCUT) {
-    forceInputValue(data+' ')
-    sendEvent(EventType.QUERY, data+' ')
-  }
 }
 
-const populateList = (options: any[]) => {
-  list.innerHTML = ''
-  options.forEach( (op: any, i) => {
-    const item = createItem(op, i)
-    list.appendChild(item)
-  })
-}
 
 const populateIconList = (icons: string[]) => {
+  currentList = icons
   list.innerHTML = ''
-  icons.forEach( (op: any, i) => {
-    const item = createIconItem(op)
+  icons.forEach( (op: any, index) => {
+    const item = createIconItem(op, index)
     list.appendChild(item)
   })
 }
 
-const createItem = (option: Option, position: number) => {
-  const { name, shorthand } = option
+const createIconItem = (iconName: string, index: number) => {
   const item = document.createElement("div"); 
-  const selectedClass = position == selectedIndex ? 'selected': '' 
-  item.innerHTML = `
-    <div class='item ${selectedClass}'>
-      <div class='title'>${name}</div>
-    </div>
-  `
-  return item
-}
-
-const createIconItem = (iconName: string) => {
-  const item = document.createElement("div"); 
-  item.className = 'item-icon material-icons'
+  item.className = `item-icon material-icons ${index === selectedIndex && 'selected'}`
   item.innerHTML = iconName
   item.onclick = () => {
     sendEvent(EventType.ICON_CLICK, iconName)
   }
-  
   return item
 }
 
-const execute = () => {
-  sendEvent(EventType.EXECUTE, query)
-  // const split = query.split(' ')
-  // if (split[1]) {
-  //   const arg = split[1]
-  //   console.log(`arg`, arg)
-  // }
-  // // quit()
-}
 
 const quit = () => sendEvent(EventType.QUIT)
 

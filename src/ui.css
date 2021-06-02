@@ -1,20 +1,28 @@
 :root {
-  --selectedBg: #D7E5FE;
+  --selectedBg: #E2E8F0;
+  --iconSize: 24px;
 }
 
-body{ margin:0; font-family:Inter; }
-.item{ display:flex; flex-direction: column; padding:8px 16px; cursor:pointer; }
-.item:hover{ background: var(--selectedBg); }
-.item.selected{ background: var(--selectedBg); }
-  .title{ font-size:14px; }
+body{ margin:0; font-family:Inter; color:#1E293B; }
 
-.item-icon{ width:24px; height:24px; font-size:24px; padding:2px; border-radius:4px; float: left; user-select: none; }
+#list .item-icon{
+  width:var(--iconSize);
+  height:var(--iconSize);
+  font-size:var(--iconSize);
+  padding:6px;
+  border-radius:6px;
+  float: left;
+  user-select: none;
+  border:1px solid white;
+}
 .item-icon:hover{ background:var(--selectedBg); }
+.item-icon.selected{ background:var(--selectedBg); }
 
-#list{ user-select: none; }
+#list{ user-select: none; padding:0 4px; }
 
 #input{
-  width:100%; height:40px; padding:16px; border:0; border-bottom:2px solid rgba(0,0,0,0.15);
+  width:100%; height:40px; padding:16px; border:0;
+  /* border-bottom:2px solid rgba(0,0,0,0.15); */
   font-size:14px;
   outline:none;
 }

@@ -1,95 +1,54 @@
-import { EventUI, EventType, getStyle } from './utils'
-import options from './options'
-import commands from './commands'
-import iconNameList from './commands/icons/iconNameList'
-figma.showUI(__html__);
+import { EventUI, EventType } from './utils'
+figma.showUI(__html__, { width: 560, height: 280 })
 
-if (figma.command == 'icons'){
-  sendToUI(EventType.SHORTCUT, 'ico')
-}
-
+const STORAGE_KEY = 'history'
+const MAX_HISTORY = 20
 
 figma.ui.onmessage = (eventUI: EventUI ) => {
   const { type, data } = eventUI
-  console.log('type: ', type);
-
   if (type == EventType.QUIT ) quit()
-  if (type == EventType.QUERY ) onQuery(data)
-  if (type == EventType.EXECUTE ) onExecute(data)
   if (type == EventType.ICON_CLICK ) onIconClick(data)
-
-};
-
-const onQuery = (query: string) => {
-  let [cmd, args] = query.split(/(?<=^\S+)\s/)
-  const command = parseCommand(cmd)
-
-  if (command == 'icon') return sendIconOptions(args)
-  else
-    sendOptions()
-}
-
-const onExecute = async (query: string) => {
-  let [cmd, ...other] = query.split(' ')
-  const args = other.join(' ')
-
-  const selection: any = figma.currentPage.selection
-
-  const command = parseCommand(cmd)
-
-  for(const node of selection){
-    commands[command](node, args)
-  }
-  quit()
-}
-
-const parseCommand = (commandQuery: string) => {
-  switch(commandQuery){
-    case 'br': return 'borderRadius'
-    case 'fs': return 'fontSize'
-    case 'c': return 'color'
-    case 'ico': return 'icon'
-  }
-}
-
-const sendOptions = () => {
-  sendToUI(EventType.OPTIONS, options)
-}
-
-const sendIconOptions = ( args: string) => {
-  if(args == '') return sendToUI(EventType.ICONS, iconNameList)
-  console.log('args: ', args);
-  const iconFilter: string = args
-  const filteredIcons = iconNameList.filter( i => {
-    // console.log(`i`, i)
-    // console.log(`is index of`, i.indexOf(iconFilter))
-    // debugger
-    return i.indexOf(iconFilter) > -1
-  })
-  sendToUI(EventType.ICONS, filteredIcons)
 }
 
 const onIconClick = async ( iconName: string) => {
-  const node = figma.createText()
   const selection = figma.currentPage.selection[0]
+  saveIconSelection(iconName)
+
   await figma.loadFontAsync({ family: 'Material Icons', style: 'Regular'})
 
-  if (selection?.type == 'TEXT'){
-    console.log('selection: ', selection);
+  if (selection?.type == 'TEXT') {
+    selection.fontName = { family: 'Material Icons', style: 'Regular'}
     selection.characters = iconName
+    selection.textAutoResize = 'WIDTH_AND_HEIGHT'
+    selection.textAlignHorizontal = 'CENTER'
+    selection.textAlignVertical = 'CENTER'
   } else {
+    const node = figma.createText()
     node.fontName = { family: 'Material Icons', style: 'Regular'}
     node.fontSize = 20
     node.characters = iconName
+    node.textAlignHorizontal = 'CENTER'
+    node.textAlignVertical = 'CENTER'
+    
     const { x, y, width, height } = (figma.viewport as any).bounds
     node.x = x + width/2
     node.y = y + height/2
 
     figma.currentPage.appendChild(node)
   }
+
+  
+
   quit()
 }
 
+async function saveIconSelection(iconName: string){
+  const selectionHistory = await getSelectionHistory()
+  const newSelectionHistory = [iconName, ...selectionHistory.filter(i => i != iconName)].slice(0, 20)
+  console.log('newSelectionHistory: ', newSelectionHistory);
+  figma.clientStorage.setAsync(STORAGE_KEY, newSelectionHistory)
+}
+  // newSelectionHistory.length = Math.min(newSelectionHistory.length, MAX_HISTORY)
 
 function sendToUI(type: EventType, data: any) {
   figma.ui.postMessage({ type: type, data: data })
@@ -98,3 +57,17 @@ function sendToUI(type: EventType, data: any) {
 function quit(){  figma.closePlugin()}
 
 
+async function getSelectionHistory(){
+  const history = await figma.clientStorage.getAsync(STORAGE_KEY)
+  return history
+}
+
+
+async function init(){
+  const history = await getSelectionHistory()
+  sendToUI(EventType.HISTORY, history)
+}
+
+// figma.clientStorage.setAsync(STORAGE_KEY, undefined)
+
+init()
