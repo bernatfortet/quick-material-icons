@@ -29,15 +29,20 @@ const onIconClick = async ( iconName: string) => {
     node.characters = iconName
     node.textAlignHorizontal = 'CENTER'
     node.textAlignVertical = 'CENTER'
-    
-    const { x, y, width, height } = (figma.viewport as any).bounds
-    node.x = x + width/2
-    node.y = y + height/2
 
-    figma.currentPage.appendChild(node)
+    if (selection) {
+      node.x = selection.x + selection.width/2-10
+      node.y = selection.y + selection.height/2-10
+      selection.parent.appendChild(node)
+    } else {
+      const { x, y, width, height } = (figma.viewport as any).bounds
+      node.x = x + width/2
+      node.y = y + height/2
+      figma.currentPage.appendChild(node)
+      figma.currentPage.selection = [node]
+    }
+
   }
-
-  
 
   quit()
 }
@@ -45,10 +50,8 @@ const onIconClick = async ( iconName: string) => {
 async function saveIconSelection(iconName: string){
   const selectionHistory = await getSelectionHistory()
   const newSelectionHistory = [iconName, ...selectionHistory.filter(i => i != iconName)].slice(0, 20)
-  console.log('newSelectionHistory: ', newSelectionHistory);
   figma.clientStorage.setAsync(STORAGE_KEY, newSelectionHistory)
 }
-  // newSelectionHistory.length = Math.min(newSelectionHistory.length, MAX_HISTORY)
 
 function sendToUI(type: EventType, data: any) {
   figma.ui.postMessage({ type: type, data: data })
