@@ -1,13 +1,19 @@
 export enum EventType {
+  INIT = 'INIT',
   QUIT = 'QUIT',
   QUERY = 'QUERY',
   OPTIONS = 'OPTIONS',
+  CURRENT_TEXT = 'CURRENT_TEXT',
   EXECUTE = 'EXECUTE',
   ICONS = 'ICONS',
   ICON_CLICK = 'ICON_CLICK',
   SHORTCUT = 'SHORTCUT',
   HISTORY = 'HISTORY',
   ICON_SELECT = 'ICON_SELECT'
+}
+
+export type InitEventData = {
+  history: string[]
 }
 
 export enum ResultsListType {
