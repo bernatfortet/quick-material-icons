@@ -30,7 +30,16 @@ function onChange() {
     return
   }
 
-  const historyResults = matchSorter(history, query)
+  const historyResults = matchSorter(history, query, {
+    sorter: (rankedItems) => {
+      return rankedItems.sort((a, b) => {
+        console.log(`a`, a)
+        console.log(`b`, b)
+        if (a === query) return -1
+        else return 0
+      })
+    },
+  })
   const iconsListResults = matchSorter(iconNameList, query).filter(
     (i) => historyResults.indexOf(i) == -1,
   )
