@@ -1,21 +1,45 @@
-import { EventUI, EventType, InitEventData } from './utils'
-import iconNameList from './commands/icons/iconNameList'
-figma.showUI(__html__, { width: 560, height: 280 })
+import { EventType, InitEventData } from 'config/types'
+import iconNameList from 'config/iconNameList'
+import { dispatch, handleEvent } from 'src/shared/codeMessageHandlers'
+import { getSelectionHistory, saveIconSelection } from 'db'
+
+console.clear()
+
+const itemSize = 38
+const listHorizontalPadding = 4
+const targetColumns = 8
+const scrollWidth = 15
+
+const width = itemSize * targetColumns + listHorizontalPadding * 2 + scrollWidth
 
 const DEFAULT_ICON_SIZE = 20
 
-const STORAGE_KEY = 'history'
-const MAX_HISTORY = 60
+init()
 
-figma.ui.onmessage = (eventUI: EventUI) => {
-  const { type, data } = eventUI
-  if (type == EventType.QUIT) quit()
-  if (type == EventType.ICON_CLICK) onIconClick(data)
+async function init() {
+  figma.showUI(__html__, { width: width, height: 280 })
+
+  handleEvent(EventType.QUIT, () => {
+    quit()
+  })
+  handleEvent(EventType.ICON_CLICK, (data) => {
+    onIconClick(data)
+  })
+
+  const history = await getSelectionHistory()
+  const data: InitEventData = {
+    history,
+    user: figma.currentUser,
+  }
+  dispatch(EventType.INIT_UI, data)
+
+  const selectedText = getNodeText()
+  if (isTextInIconsList(selectedText) && !getIsMaterialFont()) {
+    onIconClick(selectedText)
+  }
 }
 
 const onIconClick = async (iconName: string) => {
-  saveIconSelection(iconName)
-
   await figma.loadFontAsync({ family: 'Material Icons', style: 'Regular' })
 
   if (figma.currentPage.selection.length == 0) {
@@ -37,6 +61,7 @@ const onIconClick = async (iconName: string) => {
       }
     })
   }
+  await saveIconSelection(iconName)
 
   quit()
 }
@@ -71,42 +96,9 @@ function configNodeAsIcon(node, iconName, fontSize = null) {
   }
 }
 
-async function saveIconSelection(iconName: string) {
-  const selectionHistory = await getSelectionHistory()
-  const newSelectionHistory = [
-    iconName,
-    ...selectionHistory.filter((i) => i != iconName),
-  ].slice(0, MAX_HISTORY)
-  figma.clientStorage.setAsync(STORAGE_KEY, newSelectionHistory)
-}
-
-function sendToUI(type: EventType, data: any) {
-  figma.ui.postMessage({ type: type, data: data })
-}
-
 function quit() {
   figma.closePlugin()
 }
-
-async function getSelectionHistory() {
-  const history = await figma.clientStorage.getAsync(STORAGE_KEY)
-  return history || []
-}
-
-async function init() {
-  const history = await getSelectionHistory()
-  const data: InitEventData = {
-    history,
-  }
-  sendToUI(EventType.INIT, data)
-
-  const selectedText = getNodeText()
-  if (isTextInIconsList(selectedText) && !getIsMaterialFont()) {
-    onIconClick(selectedText)
-  }
-}
-
-init()
 
 // Helpers
 

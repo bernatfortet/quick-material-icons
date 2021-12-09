@@ -1,10 +1,11 @@
-import './ui.css'
+import 'ui/ui.css'
 import 'material-icons/iconfont/material-icons.css'
-import iconNameList from './commands/icons/iconNameList'
-import * as fuzzysort from 'fuzzysort'
+import iconNameList from 'config/iconNameList'
 import { matchSorter } from 'match-sorter'
 
-import { EventType, InitEventData, Option } from './utils'
+import { dispatch, handleEvent } from 'src/shared/uiMessageHandlers'
+import { EventType, InitEventData } from 'config/types'
+import { logSession } from 'shared/figma-analytics'
 
 let history: string[] = []
 let currentList: string[] = []
@@ -18,6 +19,11 @@ const list = document.getElementById('list')
 input.focus()
 input.addEventListener('input', onChange)
 input.onkeydown = (event) => onKeyDown(event)
+
+handleEvent(EventType.INIT_UI, (data) => {
+  onReceiveHistory(data.history)
+  logSession(data.user)
+})
 
 // UI Events
 function onChange() {
@@ -33,16 +39,12 @@ function onChange() {
   const historyResults = matchSorter(history, query, {
     sorter: (rankedItems) => {
       return rankedItems.sort((a, b) => {
-        console.log(`a`, a)
-        console.log(`b`, b)
         if (a === query) return -1
         else return 0
       })
     },
   })
-  const iconsListResults = matchSorter(iconNameList, query).filter(
-    (i) => historyResults.indexOf(i) == -1,
-  )
+  const iconsListResults = matchSorter(iconNameList, query).filter((i) => historyResults.indexOf(i) == -1)
 
   let results = [...historyResults, ...iconsListResults]
 
@@ -53,7 +55,7 @@ function onKeyDown(event) {
   if (event.key == 'Escape') return quit()
   if (event.key == 'Enter') {
     onPressEnter()
-    sendEvent(EventType.ICON_CLICK, currentList[selectedIndex])
+    dispatch(EventType.ICON_CLICK, currentList[selectedIndex])
   }
   if (event.key == 'ArrowRight') {
     selectedIndex++
@@ -65,10 +67,18 @@ function onKeyDown(event) {
     if (selectedIndex < 0) selectedIndex = currentList.length - 1
     populateIconList(currentList)
   }
+  if (event.key == 'ArrowUp') {
+    if (selectedIndex >= 8) selectedIndex -= 8
+    populateIconList(currentList)
+  }
+  if (event.key == 'ArrowDown') {
+    if (selectedIndex < currentList.length - 8) selectedIndex += 8
+    populateIconList(currentList)
+  }
 }
 
 const onReceiveHistory = (iconHistory) => {
-  history = iconHistory || iconNameList
+  history = iconHistory?.length > 0 ? iconHistory : iconNameList
   populateIconList(history)
 }
 
@@ -77,9 +87,9 @@ const onPressEnter = () => {
   onSelectIcon(icon)
 }
 
-const onSelectIcon = (iconName) => sendEvent(EventType.ICON_CLICK, iconName)
+const onSelectIcon = (iconName) => dispatch(EventType.ICON_CLICK, iconName)
 
-const quit = () => sendEvent(EventType.QUIT)
+const quit = () => dispatch(EventType.QUIT)
 
 // Rendering
 const populateIconList = (icons: string[]) => {
@@ -94,36 +104,11 @@ const populateIconList = (icons: string[]) => {
 
 const createIconItem = (iconName: string, index: number) => {
   const item = document.createElement('div')
-  item.className = `item-icon material-icons ${
-    index === selectedIndex && 'selected'
-  }`
+  item.className = `item-icon material-icons ${index === selectedIndex && 'selected'}`
   item.innerHTML = iconName
   item.title = iconName
   item.onclick = () => {
     onSelectIcon(iconName)
   }
   return item
-}
-
-// UI to Code communication
-onmessage = (event) => {
-  if (!event.data?.pluginMessage) return
-
-  const { type, data } = event.data?.pluginMessage
-  if (type == EventType.INIT && data) {
-    onInit(data)
-  }
-}
-
-function onInit(data: InitEventData) {
-  onReceiveHistory(data.history)
-}
-
-const sendEvent = (type: EventType, data?: any) => {
-  parent.postMessage({ pluginMessage: { type: type, data: data } }, '*')
-}
-
-// Helpers
-function isTextInIconsList(text: string) {
-  return iconNameList.indexOf(text) > -1
 }

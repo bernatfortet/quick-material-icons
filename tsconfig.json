@@ -1,6 +1,21 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "moduleResolution": "node"
+    "baseUrl": ".",
+    "target": "es2018",
+    "allowSyntheticDefaultImports": true,
+    "lib": ["es6", "dom", "es2017.object"],
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "typeRoots": ["./node_modules/@types", "./node_modules/@figma"],
+    "paths": {
+      "ui/*": ["./src/ui/*"],
+      "components/*": ["./src/components/*"],
+      "db/*": ["./src/db/*"],
+      "db": ["./src/db"],
+      "config/*": ["./src/config/*"],
+      "styles/*": ["./src/styles/*"],
+      "utils/*": ["src/utils/*"],
+      "shared/*": ["src/shared/*"]
+    }
   }
 }

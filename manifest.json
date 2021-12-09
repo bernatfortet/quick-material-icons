@@ -1,7 +1,9 @@
 {
   "name": "Quick Material Icons",
-  "id": "738168449509241862",
+  "id": "1045578614217951186",
   "api": "1.0.0",
   "main": "dist/code.js",
-  "ui": "dist/ui.html"
+  "ui": "dist/ui.html",
+  "permissions": ["currentuser"],
+  "editorType": ["figma"]
 }
