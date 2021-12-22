@@ -4,7 +4,7 @@ import iconNameList from 'config/iconNameList'
 import { matchSorter } from 'match-sorter'
 
 import { dispatch, handleEvent } from 'src/shared/uiMessageHandlers'
-import { EventType, InitEventData } from 'config/types'
+import { EventType, InitEventData, COLUMNS_COUNT } from 'config/types'
 import { logSession } from 'shared/figma-analytics'
 
 let history: string[] = []
@@ -68,11 +68,11 @@ function onKeyDown(event) {
     populateIconList(currentList)
   }
   if (event.key == 'ArrowUp') {
-    if (selectedIndex >= 8) selectedIndex -= 8
+    if (selectedIndex >= COLUMNS_COUNT) selectedIndex -= COLUMNS_COUNT
     populateIconList(currentList)
   }
   if (event.key == 'ArrowDown') {
-    if (selectedIndex < currentList.length - 8) selectedIndex += 8
+    if (selectedIndex < currentList.length - COLUMNS_COUNT) selectedIndex += COLUMNS_COUNT
     populateIconList(currentList)
   }
 }
@@ -96,7 +96,8 @@ const populateIconList = (icons: string[]) => {
   if (!icons) return
   currentList = icons
   list.innerHTML = ''
-  icons.forEach((op: any, index) => {
+  const sliced = icons.slice(0, COLUMNS_COUNT * 6)
+  sliced.forEach((op: any, index) => {
     const item = createIconItem(op, index)
     list.appendChild(item)
   })

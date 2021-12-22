@@ -1,4 +1,4 @@
-import { EventType, InitEventData } from 'config/types'
+import { COLUMNS_COUNT, EventType, InitEventData } from 'config/types'
 import iconNameList from 'config/iconNameList'
 import { dispatch, handleEvent } from 'src/shared/codeMessageHandlers'
 import { getSelectionHistory, saveIconSelection } from 'db'
@@ -7,10 +7,9 @@ console.clear()
 
 const itemSize = 38
 const listHorizontalPadding = 4
-const targetColumns = 8
 const scrollWidth = 15
 
-const width = itemSize * targetColumns + listHorizontalPadding * 2 + scrollWidth
+const width = itemSize * COLUMNS_COUNT + listHorizontalPadding * 2 + scrollWidth
 
 const DEFAULT_ICON_SIZE = 20
 
@@ -50,14 +49,14 @@ const onIconClick = async (iconName: string) => {
     figma.currentPage.appendChild(node)
     selectNodes([node])
   } else {
-    figma.currentPage.selection.forEach((node) => {
+    figma.currentPage.selection.forEach((node: any) => {
       if (node?.type == 'TEXT') {
         configNodeAsIcon(node, iconName)
       } else {
         const newNode = figma.createText()
         configNodeAsIcon(newNode, iconName, DEFAULT_ICON_SIZE)
         centerNodeInAnotherNode(newNode, node)
-        node.parent.appendChild(newNode)
+        node.appendChild(newNode)
       }
     })
   }

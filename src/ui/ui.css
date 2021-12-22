@@ -1,12 +1,42 @@
 :root {
-  --selectedBg: #e2e8f0;
+  --selectedBg: rgba(0, 0, 0, 0.06);
   --iconSize: 24px;
 }
 
+* {
+  font-family: 'Inter', sans-serif;
+}
+
 body {
+  position: relative;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
   margin: 0;
-  font-family: Inter;
+  padding: 0;
   color: #1e293b;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.input-wrapper svg {
+  position: absolute;
+}
+
+#input {
+  width: 100%;
+  height: 40px;
+  padding: 0 8px 0 35px;
+  border: 0;
+  font-size: 12px;
+  outline: none;
 }
 
 #list .item-icon {
@@ -14,7 +44,7 @@ body {
   height: var(--iconSize);
   font-size: var(--iconSize);
   padding: 6px;
-  border-radius: 6px;
+  border-radius: 3px;
   float: left;
   user-select: none;
   border: 1px solid white;
@@ -28,15 +58,73 @@ body {
 
 #list {
   user-select: none;
-  padding: 0 4px;
+  padding: 4px;
+  flex: 1;
+  overflow-y: auto;
 }
 
-#input {
-  width: 100%;
-  height: 40px;
-  padding: 16px;
-  border: 0;
-  /* border-bottom:2px solid rgba(0,0,0,0.15); */
-  font-size: 14px;
-  outline: none;
+footer {
+  border-top: rgba(0, 0, 0, 0.1) solid 1px;
+  height: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px 0 4px;
+  font-size: 11px;
+  margin-bottom: 1px;
 }
+
+footer a {
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 6px;
+  border-radius: 3px;
+}
+footer a:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: rgba(0, 0, 0, 0.9);
+  fill: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+}
+
+footer a:hover svg {
+  fill: rgba(0, 0, 0, 0.8);
+}
+
+footer svg {
+  margin-right: 4px;
+  fill: rgba(0, 0, 0, 0.5);
+}
+
+.like {
+  display: none;
+}
+
+/*  FONTS */
+@font-face {
+  font-family: 'Inter';
+  font-weight: 400;
+  font-style: normal;
+  src: url('https://rsms.me/inter/font-files/Inter-Regular.woff2?v=3.7') format('woff2'),
+    url('https://rsms.me/inter/font-files/Inter-Regular.woff?v=3.7') format('woff');
+}
+/* 
+@font-face {
+  font-family: 'Inter';
+  font-weight: 500;
+  font-style: normal;
+  src: url('https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7') format('woff2'),
+    url('https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7') format('woff');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-weight: 600;
+  font-style: normal;
+  src: url('https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7') format('woff2'),
+    url('https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7') format('woff');
+} */

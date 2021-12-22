@@ -9,3 +9,5 @@ export type InitEventData = {
   history: string[]
   user: User
 }
+
+export const COLUMNS_COUNT = 8
