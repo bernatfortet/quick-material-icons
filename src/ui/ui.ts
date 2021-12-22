@@ -55,7 +55,6 @@ function onKeyDown(event) {
   if (event.key == 'Escape') return quit()
   if (event.key == 'Enter') {
     onPressEnter()
-    dispatch(EventType.ICON_CLICK, currentList[selectedIndex])
   }
   if (event.key == 'ArrowRight') {
     selectedIndex++

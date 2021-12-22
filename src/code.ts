@@ -76,10 +76,10 @@ function centerNodeInViewport(node) {
   return node
 }
 
-function centerNodeInAnotherNode(node, anotherNode) {
-  node.x = anotherNode.x + anotherNode.width / 2 - node.width / 2
-  node.y = anotherNode.y + anotherNode.height / 2 - node.height / 2
-  return node
+function centerNodeInAnotherNode(nodeToCenter, referenceNode) {
+  nodeToCenter.x = referenceNode.width / 2 - nodeToCenter.width / 2
+  nodeToCenter.y = referenceNode.height / 2 - nodeToCenter.height / 2
+  return nodeToCenter
 }
 
 function configNodeAsIcon(node, iconName, fontSize = null) {

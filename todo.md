@@ -1,0 +1,2 @@
+- [x] Fix double addition when pressing enter
+- [x] Fix centering of icon
